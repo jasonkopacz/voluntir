@@ -8,6 +8,9 @@ dependencies:
   '@expo/vector-icons':
     specifier: ^14.0.0
     version: 14.0.2
+  '@react-native-google-signin/google-signin':
+    specifier: ^12.2.1
+    version: 12.2.1(expo@51.0.14)(react-dom@18.2.0)(react-native@0.74.1)(react@18.2.0)
   '@react-navigation/native':
     specifier: ^6.1.7
     version: 6.1.17(react-native@0.74.1)(react@18.2.0)
@@ -2996,6 +2999,25 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
+    dev: false
+
+  /@react-native-google-signin/google-signin@12.2.1(expo@51.0.14)(react-dom@18.2.0)(react-native@0.74.1)(react@18.2.0):
+    resolution: {integrity: sha512-qt2Cb+bN2NS8BBT06M3UbLVS1gaSYTenNh4uZtPNmyJC23xZAynLkuhvsC6gmeEnxcj0wLVUn1Es+LSHw0OhVQ==}
+    peerDependencies:
+      expo: '>=50.0.0'
+      react: '*'
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      expo: 51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-native: 0.74.1(@babel/core@7.24.7)(@babel/preset-env@7.24.7)(@types/react@18.2.79)(react@18.2.0)
     dev: false
 
   /@react-native/assets-registry@0.74.83:
