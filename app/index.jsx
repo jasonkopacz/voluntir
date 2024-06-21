@@ -1,4 +1,4 @@
-import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { Stack, Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
@@ -12,7 +12,8 @@ export default function Home() {
   const [userInfo, setUserInfo] = useState();
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '89153556013-v985oo4me6scftsvd8skju6kkmi6o4dp.apps.googleusercontent.com',
+      webClientId: '946778248468-30ad6u2mdg6vguc2gu8c59hf9q7a4029.apps.googleusercontent.com',
+      "client_type": 3
     });
   }, []);
 
@@ -20,9 +21,11 @@ export default function Home() {
     try {
       await GoogleSignin.hasPlayServices();
       const user = await GoogleSignin.signIn();
+      console.log(user);
       setUserInfo(user);
       setError();
     } catch (e) {
+      console.log(e)
       setError(e);
     }
   };
@@ -33,34 +36,27 @@ export default function Home() {
     GoogleSignin.signOut();
   };
   return (
-    <>
-      <Stack.Screen options={{ title: 'Home' }} />
-      <View style={styles.container}>
-        <Text>{JSON.stringify(error)}</Text>
-        {userInfo && <Text>{JSON.stringify(userInfo.user)}</Text>}
-        {userInfo ? (
-          <Button title="Logout" onPress={logout} />
-        ) : (
-          <GoogleSigninButton
-            size={GoogleSigninButton.Size.Standard}
-            color={GoogleSigninButton.Color.Dark}
-            onPress={signin}
-          />
-        )}
-      </View>
-      <Container>
-        <ScreenContent path="app/index.tsx" title="Home" />
-        <Link href={{ pathname: '/details', params: { name: 'Dan' } }} asChild>
-          <Button title="Show Details" />
-        </Link>
-      </Container>
-    </>
+    <View style={styles.container}>
+      <Text>{JSON.stringify(error)}</Text>
+      {userInfo && <Text>{JSON.stringify(userInfo.user)}</Text>}
+      {userInfo ? (
+        <Button title="Logout" onPress={logout} />
+      ) : (
+        <>
+        <Text>Debug: About to render GoogleSigninButton</Text>
+        <GoogleSigninButton
+  size={GoogleSigninButton.Size.Wide}
+  color={GoogleSigninButton.Color.Dark}
+  onPress={signin}
+/>
+        </>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
