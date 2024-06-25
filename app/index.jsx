@@ -12,7 +12,7 @@ export default function Home() {
   const [userInfo, setUserInfo] = useState();
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '946778248468-30ad6u2mdg6vguc2gu8c59hf9q7a4029.apps.googleusercontent.com',
+      webClientId: '59680473041-bnc8pqto508kt6utv0ltt5l3l74bh5v9.apps.googleusercontent.com',
       "client_type": 3
     });
   }, []);
