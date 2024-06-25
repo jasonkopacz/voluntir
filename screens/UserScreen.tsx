@@ -18,7 +18,7 @@ const UserItem: React.FC<{ user: User }> = ({ user }) => (
   </View>
 );
 
-const UsersScreen: React.FC = () => {
+const UserScreen: React.FC = () => {
   const user = useAppSelector((state) => state.user.currentUser);
   console.log(user);
   return (
@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UsersScreen;
+export default UserScreen;
