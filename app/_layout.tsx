@@ -10,5 +10,3 @@ export default function Layout() {
     </Provider>
   );
 }
-
-// add header and nav here
