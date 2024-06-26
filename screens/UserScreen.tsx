@@ -20,7 +20,7 @@ interface User {
 
 const UserItem: React.FC<{ user: User }> = ({ user }) => (
   <View style={styles.userItem}>
-    <Image ref={user.photo}></Image>
+    <Image source={{ uri: user.photo }} style={styles.userImage} />
     <Text style={styles.userName}>{user.firstName}</Text>
     <Text style={styles.userEmail}>{user.email}</Text>
   </View>
