@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen';
 import InboxScreen from '../screens/InboxScreen';
 import CreatePostScreen from '../screens/CreatePostScreen';
 
@@ -29,14 +28,13 @@ export default function BottomTabNavigator() {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName || ''} size={size} color={color} />;
         },
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Create" component={CreatePostScreen} />
       <Tab.Screen name="Inbox" component={InboxScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 }

@@ -6,6 +6,7 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
+  photo: string;
 }
 
 interface UserState {
@@ -23,8 +24,11 @@ const userSlice = createSlice({
     setCurrentUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload;
     },
+    clearCurrentUser: (state) => {
+      state.currentUser = null;
+    },
   },
 });
 
-export const { setCurrentUser } = userSlice.actions;
+export const { setCurrentUser, clearCurrentUser } = userSlice.actions;
 export default userSlice.reducer;
