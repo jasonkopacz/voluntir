@@ -1,24 +1,32 @@
 // src/screens/UsersPage.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
 import { useAppSelector } from '../redux/hooks';
-
+// google user object
+// {"idToken": null, "scopes": ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
+// "openid", "profile", "email"],
+// "serverAuthCode": null,
+// "user": {"email": "jtkopacz@gmail.com", "familyName": "Kopacz", "givenName": "Jason",
+// "id": "110781254796068001286", "name": "Jason Kopacz",
+// "photo": "https://lh3.googleusercontent.com/a/ACg8ocKf-tFqX5LF_2ExKn1Q2Bx2l8ZLdpm2UdxdqLtESwQhTPa1DnNC"}}
 interface User {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
+  photo: string;
 }
 
 const UserItem: React.FC<{ user: User }> = ({ user }) => (
   <View style={styles.userItem}>
+    <Image source={{ uri: user.photo }} style={styles.userImage} />
     <Text style={styles.userName}>{user.firstName}</Text>
     <Text style={styles.userEmail}>{user.email}</Text>
   </View>
 );
 
-const UsersScreen: React.FC = () => {
+const UserScreen: React.FC = () => {
   const user = useAppSelector((state) => state.user.currentUser);
   console.log(user);
   return (
@@ -65,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UsersScreen;
+export default UserScreen;
