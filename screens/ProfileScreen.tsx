@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppSelector } from '../redux/hooks'; // Adjust the import path as needed
-import LogoutComponent from '~/components/LogoutComponent';
+import LogoutComponent from '~/components/auth/LogoutComponent';
 
 const ProfileScreen: React.FC = () => {
   const user = useAppSelector((state) => state.user.currentUser);

@@ -2,6 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 
 import userReducer from './slices/users/userSlice';
 import usersReducer from './slices/users/usersSlice';
+import userPreferencesReducer from './slices/users/userPreferencesSlice';
 import categoryReducer from './slices/categories/categorySlice';
 import categoriesReducer from './slices/categories/categoriesSlice';
 import groupReducer from './slices/groups/groupSlice';
@@ -12,6 +13,7 @@ import eventsReducer from './slices/events/eventsSlice';
 export const rootReducer = combineReducers({
   user: userReducer,
   users: usersReducer,
+  userPreferences: userPreferencesReducer,
   category: categoryReducer,
   categories: categoriesReducer,
   group: groupReducer,
