@@ -11,7 +11,6 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import LoginComponent from '~/components/auth/LoginComponent';
 import { RootState } from '~/redux/store';
 
-// Mock the GoogleSignin module
 jest.mock('@react-native-google-signin/google-signin', () => {
   const mockReact = require('react');
   const mockRN = require('react-native');
