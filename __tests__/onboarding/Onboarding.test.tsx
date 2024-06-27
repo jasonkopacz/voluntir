@@ -10,13 +10,11 @@ import OnboardingQuestionnaire from '~/components/onboarding/OnboardingQuestionn
 import { RootState } from '~/redux/store';
 import { Category } from '~/redux/slices/categories/categorySlice';
 
-// Mock the redux hooks
 jest.mock('../../redux/hooks', () => ({
   useAppDispatch: jest.fn(),
   useAppSelector: jest.fn(),
 }));
 
-// Mock Ionicons
 jest.mock('@expo/vector-icons', () => ({
   Ionicons: 'Ionicons',
 }));
@@ -28,7 +26,6 @@ describe('OnboardingQuestionnaire', () => {
   let store: ReturnType<typeof mockStore>;
   let mockDispatch: jest.Mock;
 
-  // Helper function to create a mock category
   const createMockCategory = (id: string, name: string): Category => ({
     id,
     name,
@@ -128,15 +125,13 @@ describe('OnboardingQuestionnaire', () => {
       </Provider>
     );
 
-    // Go through all steps
     fireEvent.press(getByText('Next'));
     fireEvent.press(getByText('Next'));
     fireEvent.press(getByText('Next'));
 
-    // Finish onboarding
     fireEvent.press(getByText('Finish'));
 
-    expect(mockDispatch).toHaveBeenCalledTimes(5); // 4 preference actions + setOnboardingComplete
+    expect(mockDispatch).toHaveBeenCalledTimes(5);
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'userPreferences/setCategoryIds' })
     );
