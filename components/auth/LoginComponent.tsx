@@ -2,9 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useAppDispatch } from '~/redux/hooks';
 import { setCurrentUser } from '~/redux/slices/users/userSlice';
-import { GoogleSignin, GoogleSigninButton, User } from '@react-native-google-signin/google-signin';
-
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  User as GoogleUser,
+} from '@react-native-google-signin/google-signin';
+import { User as ReduxUser } from '~/redux/slices/users/userSlice';
 const webClientId: string | undefined = process.env.GOOGLE_WEB_CLIENT_ID;
+
+namespace Volunteer {
+  export interface User extends ReduxUser {}
+
+  export function fromGoogleUser(googleUser: GoogleUser): User {
+    return {
+      id: googleUser.user.id,
+      firstName: googleUser.user.givenName || '',
+      lastName: googleUser.user.familyName || '',
+      email: googleUser.user.email,
+      photo: googleUser.user.photo || '',
+      groupIds: [],
+      eventIds: [],
+    };
+  }
+}
 
 export default function LoginComponent() {
   const dispatch = useAppDispatch();
@@ -19,17 +39,11 @@ export default function LoginComponent() {
   const login = async (): Promise<void> => {
     try {
       await GoogleSignin.hasPlayServices();
-      const googleUser: User = await GoogleSignin.signIn();
+      const googleUser: GoogleUser = await GoogleSignin.signIn();
 
-      dispatch(
-        setCurrentUser({
-          id: googleUser.user.id,
-          firstName: googleUser.user.givenName || '',
-          lastName: googleUser.user.familyName || '',
-          email: googleUser.user.email,
-          photo: googleUser.user.photo || '',
-        })
-      );
+      const volunteerUser: Volunteer.User = Volunteer.fromGoogleUser(googleUser);
+
+      dispatch(setCurrentUser(volunteerUser));
 
       console.log('User saved to Redux store:', googleUser.user);
       setError(undefined);

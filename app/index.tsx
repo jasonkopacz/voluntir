@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import BottomTabNavigator from '../navigation/BottomTabNavigator';
-import LoginComponent from '~/components/LoginComponent';
 import { useAppSelector } from '../redux/hooks';
+import BottomTabNavigator from '../navigation/BottomTabNavigator';
+import LoginComponent from '~/components/auth/LoginComponent';
+import OnboardingQuestionnaire from '../components/onboarding/OnboardingQuestionnaire';
 
 export default function Index(): JSX.Element {
   const user = useAppSelector((state) => state.user.currentUser);
+  const hasCompletedOnboarding = useAppSelector((state) => state.user.hasCompletedOnboarding);
 
   if (!user) {
     return (
@@ -14,6 +16,10 @@ export default function Index(): JSX.Element {
         <LoginComponent />
       </View>
     );
+  }
+
+  if (!hasCompletedOnboarding) {
+    return <OnboardingQuestionnaire />;
   }
 
   return (

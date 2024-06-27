@@ -8,7 +8,7 @@ interface User {
   lastName: string;
   email: string;
   photo: string;
-  gorupIds: string[];
+  groupIds: string[];
   eventIds: string[];
 }
 
