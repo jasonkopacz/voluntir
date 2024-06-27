@@ -137,16 +137,15 @@ describe('LoginComponent', () => {
     await waitFor(() => {
       const actions = store.getActions();
       expect(actions[0].type).toBe('user/setCurrentUser');
-      expect(actions[0].payload).toEqual({
-        id: '123',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john@example.com',
-        photo: 'https://example.com/photo.jpg',
-        groupIds: [],
-        eventIds: [],
-      });
-    });
+expect(actions[0].payload).toEqual({
+  id: '123',
+  givenName: 'John',
+  familyName: 'Doe',
+  email: 'john@example.com',
+  photo: 'https://example.com/photo.jpg',
+  groupIds: [],
+  eventIds: [],
+});
   });
 
   it('displays error message on sign in failure', async () => {
