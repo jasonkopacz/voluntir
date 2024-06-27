@@ -59,6 +59,7 @@ export default function LoginComponent() {
         size={GoogleSigninButton.Size.Wide}
         color={GoogleSigninButton.Color.Dark}
         onPress={login}
+        testID="google-signin-button"
       />
       {error && <Text style={styles.errorText}>{error.message}</Text>}
     </View>

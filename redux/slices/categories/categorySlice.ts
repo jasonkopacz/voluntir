@@ -12,13 +12,13 @@ export interface Category {
 }
 
 interface CategoryState {
-  category: Category | null;
+  currentCategory: Category | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: CategoryState = {
-  category: null,
+  currentCategory: null,
   isLoading: false,
   error: null,
 };
@@ -28,12 +28,12 @@ const categorySlice = createSlice({
   initialState,
   reducers: {
     setCategory: (state, action: PayloadAction<Category>) => {
-      state.category = action.payload;
+      state.currentCategory = action.payload;
       state.isLoading = false;
       state.error = null;
     },
     clearCategory: (state) => {
-      state.category = null;
+      state.currentCategory = null;
     },
     setCategoryLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
