@@ -1,0 +1,75 @@
+container {
+  flex: 1;
+  backgroundcolor: '#F5F5F5';
+}
+scrollContainer {
+  padding: 20;
+}
+headerText {
+  font-size: 24;
+  font-weight: 'bold';
+  color: '#333';
+  margin-bottom: 20;
+  text-align: 'center';
+}
+progressContainer {
+  flex-direction: 'row';
+  justify-content: 'center';
+  margin-bottom: 30;
+}
+progressDot {
+  width: 10;
+  height: 10;
+  border-radius: 5;
+  background-color: '#D1D1D1';
+  margin: 0 5;
+}
+activeDot {
+  background-color: '#4CAF50';
+}
+questionText {
+  font-size: 18;
+  font-weight: '600';
+  color: '#333';
+  margin-bottom: 20;
+}
+optionButton: {
+  backgroundcolor: '#FFFFFF';
+  borderradius: 10;
+  padding: 15;
+  marginbottom: 10;
+  flexdirection: 'row';
+  justifycontent: 'space-between';
+  alignitems: 'center';
+  shadowcolor: '#000';
+  shadowOffset: {
+    width: 0;
+    height: 2;
+  }
+  shadowopacity: 0.1;
+  shadowradius: 4;
+  elevation: 3;
+}
+selectedOption: {
+  backgroundcolor: '#4CAF50';
+}
+optionText: {
+  fontsize: 16;
+  color: '#333';
+}
+selectedOptionText: {
+  color: '#FFFFFF';
+  fontweight: 'bold';
+}
+nextButton: {
+  backgroundcolor: '#4CAF50';
+  borderradius: 25;
+  padding: 15;
+  margin: 20;
+  alignitems: 'center';
+}
+nextButtonText: {
+  color: '#FFFFFF';
+  fontsize: 18;
+  fontweight: 'bold';
+}
