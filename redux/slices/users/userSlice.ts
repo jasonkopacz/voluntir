@@ -10,7 +10,7 @@ export interface User {
   groupIds: string[];
   eventIds: string[];
 }
-interface UserState {
+export interface UserState {
   currentUser: User | null;
   hasCompletedOnboarding: boolean;
   isLoading: boolean;

@@ -53,6 +53,7 @@ const OnboardingQuestionnaire: React.FC = () => {
             {Object.values(categories).map((category) => (
               <TouchableOpacity
                 key={category.id}
+                testID={category.id}
                 style={[
                   styles.optionButton,
                   selectedCategoryIds.includes(category.id) && styles.selectedOption,
@@ -85,6 +86,7 @@ const OnboardingQuestionnaire: React.FC = () => {
             {days.map((day) => (
               <TouchableOpacity
                 key={day}
+                testID={day}
                 style={[styles.optionButton, selectedDays.includes(day) && styles.selectedOption]}
                 onPress={() =>
                   setSelectedDays((prev) =>
@@ -112,6 +114,7 @@ const OnboardingQuestionnaire: React.FC = () => {
             {[5, 10, 25, 50].map((d) => (
               <TouchableOpacity
                 key={d}
+                testID={d.toString()}
                 style={[styles.optionButton, distance === d && styles.selectedOption]}
                 onPress={() => setDistance(d)}>
                 <Text style={[styles.optionText, distance === d && styles.selectedOptionText]}>
@@ -128,6 +131,7 @@ const OnboardingQuestionnaire: React.FC = () => {
             <Text style={styles.questionText}>Notification preferences:</Text>
             <TouchableOpacity
               style={[styles.optionButton, notifications.email && styles.selectedOption]}
+              testID="email"
               onPress={() => setNotifications((prev) => ({ ...prev, email: !prev.email }))}>
               <Text style={[styles.optionText, notifications.email && styles.selectedOptionText]}>
                 Email notifications
@@ -138,6 +142,7 @@ const OnboardingQuestionnaire: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.optionButton, notifications.push && styles.selectedOption]}
+              testID="push"
               onPress={() => setNotifications((prev) => ({ ...prev, push: !prev.push }))}>
               <Text style={[styles.optionText, notifications.push && styles.selectedOptionText]}>
                 Push notifications
