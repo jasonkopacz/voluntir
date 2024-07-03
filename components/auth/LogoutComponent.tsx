@@ -1,19 +1,19 @@
 import { useAppDispatch } from '~/redux/hooks';
-import { clearCurrentUser } from '~/redux/slices/users/userSlice';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { logout } from '~/redux/actions/users/userActions';
 export default function LogoutComponent() {
   const dispatch = useAppDispatch();
 
-  const logout = (): void => {
-    dispatch(clearCurrentUser());
+  const handleLogout = (): void => {
+    dispatch(logout());
     GoogleSignin.revokeAccess();
     GoogleSignin.signOut();
   };
 
   return (
     <TouchableOpacity style={styles.logoutButton} testID="logoutButton">
-      <Text style={styles.logoutButtonText} onPress={logout} testID="logoutButtonText">
+      <Text style={styles.logoutButtonText} onPress={handleLogout} testID="logoutButtonText">
         Log Out
       </Text>
     </TouchableOpacity>

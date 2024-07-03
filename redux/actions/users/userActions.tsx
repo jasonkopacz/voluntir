@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setCurrentUser, setLoading, setError, User } from '~/redux/slices/users/userSlice';
 import { getRecord, addRecord, updateRecord, deleteRecord } from '~/api/firestore/dbActions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const COLLECTION_NAME = 'users';
 
@@ -10,6 +11,7 @@ export const fetchUser = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const user = await getRecord<User>(COLLECTION_NAME, userId);
+      AsyncStorage.setItem('auth', JSON.stringify(user));
       dispatch(setCurrentUser(user));
     } catch (error: any) {
       dispatch(setError(error.message));
@@ -66,3 +68,38 @@ export const deleteUser = createAsyncThunk(
     }
   }
 );
+
+export const login = createAsyncThunk<User, User>(
+  'auth/login',
+  async (user: User, { dispatch }) => {
+    try {
+      dispatch(setLoading(true));
+      let userProfile;
+      if ((userProfile = await getRecord<User>('users', user.id))) {
+        dispatch(setCurrentUser(userProfile));
+        return userProfile;
+      } else {
+        userProfile = await addRecord<User>('users', user);
+        dispatch(setCurrentUser(userProfile));
+        return userProfile;
+      }
+    } catch (error: any) {
+      dispatch(setError(error.message));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
+export const logout = createAsyncThunk('auth/logout', async (_, { dispatch }) => {
+  try {
+    dispatch(setLoading(true));
+    dispatch(setCurrentUser(null));
+  } catch (error: any) {
+    dispatch(setError(error.message));
+    throw error;
+  } finally {
+    dispatch(setLoading(false));
+  }
+});

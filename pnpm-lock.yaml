@@ -14,6 +14,9 @@ dependencies:
   '@react-native-firebase/app':
     specifier: ^20.1.0
     version: 20.1.0(expo@51.0.14)(react-native@0.74.1)(react@18.2.0)
+  '@react-native-firebase/auth':
+    specifier: ^20.1.0
+    version: 20.1.0(@react-native-firebase/app@20.1.0)(expo@51.0.14)
   '@react-native-firebase/firestore':
     specifier: ^20.1.0
     version: 20.1.0(@react-native-firebase/app@20.1.0)
@@ -3242,6 +3245,20 @@ packages:
       react: 18.2.0
       react-native: 0.74.1(@babel/core@7.24.7)(@babel/preset-env@7.24.7)(@types/react@18.2.79)(react@18.2.0)
       superstruct: 0.6.2
+    dev: false
+
+  /@react-native-firebase/auth@20.1.0(@react-native-firebase/app@20.1.0)(expo@51.0.14):
+    resolution: {integrity: sha512-HTv7x5dDhLwHZkwJOsuhMUPIxXcda/40w03OQzhpuTghAzI30iMa5f4UW0aDTiEnaa4IuXpGIRCytdUEuuo1QA==}
+    peerDependencies:
+      '@react-native-firebase/app': 20.1.0
+      expo: '>=47.0.0'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+    dependencies:
+      '@react-native-firebase/app': 20.1.0(expo@51.0.14)(react-native@0.74.1)(react@18.2.0)
+      expo: 51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7)
+      plist: 3.1.0
     dev: false
 
   /@react-native-firebase/firestore@20.1.0(@react-native-firebase/app@20.1.0):
