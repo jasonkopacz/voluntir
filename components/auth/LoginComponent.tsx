@@ -2,36 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { useAppDispatch } from '~/redux/hooks';
-import { login } from '~/redux/actions/users/userActions';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  User as GoogleUser,
-} from '@react-native-google-signin/google-signin';
-import { User as ReduxUser } from '~/redux/slices/users/userSlice';
+import { login, signup } from '~/redux/actions/users/userActions';
+import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { User } from '~/redux/slices/users/userSlice';
 import { getRecord } from '~/api/firestore/dbActions';
 
-const webClientId: string | undefined = process.env.GOOGLE_WEB_CLIENT_ID;
-
-// namespace Volunteer {
-//   export interface User extends ReduxUser {}
-
-//   export function fromGoogleUser(googleUser: GoogleUser): User {
-//     return {
-//       id: googleUser.user.id,
-//       firstName: googleUser.user.givenName || '',
-//       lastName: googleUser.user.familyName || '',
-//       email: googleUser.user.email,
-//       photo: googleUser.user.photo || '',
-//       groupIds: [],
-//       eventIds: [],
-//     };
-//   }
-// }
+const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID as string;
 
 export default function LoginComponent() {
   const dispatch = useAppDispatch();
   const [error, setError] = useState<Error | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -40,62 +21,52 @@ export default function LoginComponent() {
   }, []);
 
   const handleLogin = async (): Promise<void> => {
+    if (isLoading) return;
+    setIsLoading(true);
+
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const { idToken } = await GoogleSignin.getTokens();
-      console.log('idToken', idToken);
-
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const user = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(user.idToken);
       const userCredential = await auth().signInWithCredential(googleCredential);
-
       const firebaseUser = userCredential.user;
 
       if (firebaseUser) {
-        let existingUser: ReduxUser | null = null;
         try {
-          existingUser = await getRecord<ReduxUser>('users', firebaseUser.uid);
+          const existingUser = await getRecord<User>('users', firebaseUser.uid);
+          if (existingUser) {
+            await dispatch(login(existingUser));
+            console.log('User signed in successfully:', existingUser);
+          } else {
+            console.log('New user');
+            const newUser: User = {
+              id: firebaseUser.uid,
+              firstName: firebaseUser.displayName?.split(' ')[0] || '',
+              lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+              email: firebaseUser.email || '',
+              photo: firebaseUser.photoURL || '',
+              groupIds: [],
+              eventIds: [],
+            };
+
+            console.log('dispatching signup');
+            await dispatch(signup(newUser));
+            console.log('User signed up successfully:', newUser);
+          }
         } catch (error) {
-          console.log('User not found in Firestore, creating new user');
+          console.error('Error during login/signup process:', error);
+          throw error;
         }
-
-        const user: ReduxUser = {
-          id: firebaseUser.uid,
-          firstName: firebaseUser.displayName?.split(' ')[0] || '',
-          lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
-          email: firebaseUser.email || '',
-          photo: firebaseUser.photoURL || '',
-          groupIds: existingUser?.groupIds || [],
-          eventIds: existingUser?.eventIds || [],
-        };
-
-        // Dispatch the login action to update Redux state and save to Firestore
-        await dispatch(login(user));
-
-        console.log('User signed in successfully:', user);
       } else {
         throw new Error('Failed to get user from Firebase User Credential');
       }
     } catch (error) {
       console.error('Login error:', error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  // const handleLogin = async (): Promise<void> => {
-  //   try {
-  //     await GoogleSignin.hasPlayServices();
-  //     const googleUser: GoogleUser = await GoogleSignin.signIn();
-
-  //     const volunteerUser: Volunteer.User = Volunteer.fromGoogleUser(googleUser as GoogleUser);
-  //     await (dispatch(login(volunteerUser as ReduxUser)) as any).unwrap();
-
-  //     console.log('User saved to Redux store:', googleUser.user);
-  //     setError(undefined);
-  //   } catch (e) {
-  //     console.error('Login error:', e);
-  //     setError(e as Error);
-  //   }
-  // };
 
   return (
     <View style={styles.container}>

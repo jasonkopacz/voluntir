@@ -5,19 +5,23 @@ import firestore from '@react-native-firebase/firestore';
 export const getRecord = async <T extends Record<string, any>>(
   collectionName: string,
   id: string
-): Promise<T & { id: string }> => {
+): Promise<(T & { id: string }) | null> => {
   try {
-    const doc = await firestore().collection(collectionName).doc(id).get();
-    if (!doc.exists) {
-      throw new Error(`Document not found in ${collectionName}`);
-    }
-    return { id: doc.id, ...doc.data() } as T & { id: string };
+    const querySnapshot = await firestore()
+      .collection(collectionName)
+      .where('id', '==', id)
+      .limit(1)
+      .get();
+
+    console.log('querySnapshot', querySnapshot);
+    const doc = querySnapshot.docs[0];
+    console.log('doc', doc);
+    return { ...doc.data(), id: doc.id } as T & { id: string };
   } catch (error) {
     console.error(`Error getting record from ${collectionName}:`, error);
-    throw new Error(`Failed to get record from ${collectionName}`);
+    return null;
   }
 };
-
 export const addRecord = async <T extends Record<string, any>>(
   collectionName: string,
   data: Omit<T, 'id'>

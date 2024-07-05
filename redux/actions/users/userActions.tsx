@@ -69,23 +69,39 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
-export const login = createAsyncThunk<User, User>(
+export const login = createAsyncThunk<User | null, User>(
   'auth/login',
-  async (user: User, { dispatch }) => {
+  async (user: User, { dispatch, rejectWithValue }) => {
     try {
       dispatch(setLoading(true));
-      let userProfile;
-      if ((userProfile = await getRecord<User>('users', user.id))) {
+      const userProfile = await getRecord<User>(COLLECTION_NAME, user.id);
+      if (userProfile) {
         dispatch(setCurrentUser(userProfile));
         return userProfile;
       } else {
-        userProfile = await addRecord<User>('users', user);
-        dispatch(setCurrentUser(userProfile));
-        return userProfile;
+        console.log('User not found');
+        return null;
       }
-    } catch (error: any) {
-      dispatch(setError(error.message));
-      throw error;
+    } catch (error) {
+      dispatch(setError(error instanceof Error ? error.message : 'An unknown error occurred'));
+      return rejectWithValue(error instanceof Error ? error.message : 'An unknown error occurred');
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
+export const signup = createAsyncThunk<User, User>(
+  'auth/signup',
+  async (user: User, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(setLoading(true));
+      const userProfile = await addRecord<User>(COLLECTION_NAME, user);
+      dispatch(setCurrentUser(userProfile));
+      return userProfile;
+    } catch (error) {
+      dispatch(setError(error instanceof Error ? error.message : 'An unknown error occurred'));
+      return rejectWithValue(error instanceof Error ? error.message : 'An unknown error occurred');
     } finally {
       dispatch(setLoading(false));
     }
