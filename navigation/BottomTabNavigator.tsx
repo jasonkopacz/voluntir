@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
+import SearchScreen from '~/screens/SearchScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import InboxScreen from '../screens/InboxScreen';
 import CreatePostScreen from '../screens/CreatePostScreen';
@@ -18,6 +19,8 @@ export default function BottomTabNavigator() {
 
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Search') {
+            iconName = focused ? 'search' : 'search-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
           } else if (route.name === 'Settings') {
@@ -28,10 +31,11 @@ export default function BottomTabNavigator() {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           }
 
-          return <Ionicons name={iconName || ''} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Create" component={CreatePostScreen} />
       <Tab.Screen name="Inbox" component={InboxScreen} />
