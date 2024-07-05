@@ -13,9 +13,7 @@ export const getRecord = async <T extends Record<string, any>>(
       .limit(1)
       .get();
 
-    console.log('querySnapshot', querySnapshot);
     const doc = querySnapshot.docs[0];
-    console.log('doc', doc);
     return { ...doc.data(), id: doc.id } as T & { id: string };
   } catch (error) {
     console.error(`Error getting record from ${collectionName}:`, error);

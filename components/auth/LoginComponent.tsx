@@ -28,7 +28,9 @@ export default function LoginComponent() {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const user = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(user.idToken);
+      console.log('google', googleCredential);
       const userCredential = await auth().signInWithCredential(googleCredential);
+      console.log('user', userCredential);
       const firebaseUser = userCredential.user;
 
       if (firebaseUser) {

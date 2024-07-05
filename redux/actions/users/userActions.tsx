@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setCurrentUser, setLoading, setError, User } from '~/redux/slices/users/userSlice';
-import { getRecord, addRecord, updateRecord, deleteRecord } from '~/api/firestore/dbActions';
+import { setCurrentUser, setLoading, setError, User } from '../../slices/users/userSlice';
+import { getRecord, addRecord, updateRecord, deleteRecord } from '../../../api/firestore/dbActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const COLLECTION_NAME = 'users';
