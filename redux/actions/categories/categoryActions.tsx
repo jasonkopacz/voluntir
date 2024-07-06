@@ -35,6 +35,7 @@ export const fetchCategory = createAsyncThunk(
 export const addCategory = createAsyncThunk(
   'category/addCategory',
   async (categoryData: Omit<Category, 'id'>, { dispatch }) => {
+    console.log('made it');
     try {
       dispatch(setCategoryLoading(true));
       const newCategory = await addRecord<Category>(COLLECTION_NAME, categoryData);

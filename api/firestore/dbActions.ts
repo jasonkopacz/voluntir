@@ -13,9 +13,7 @@ export const getRecord = async <T extends Record<string, any>>(
       .limit(1)
       .get();
 
-    console.log('querySnapshot', querySnapshot);
     const doc = querySnapshot.docs[0];
-    console.log('doc', doc);
     return { ...doc.data(), id: doc.id } as T & { id: string };
   } catch (error) {
     console.error(`Error getting record from ${collectionName}:`, error);
@@ -27,6 +25,7 @@ export const addRecord = async <T extends Record<string, any>>(
   data: Omit<T, 'id'>
 ): Promise<T> => {
   try {
+    console.log(collectionName);
     const docRef = await firestore().collection(collectionName).add(data);
     const newDoc = await docRef.get();
     return { id: newDoc.id, ...newDoc.data() } as unknown as T;
