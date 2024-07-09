@@ -6,8 +6,8 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  groupId: string; // ID of the organizing group
-  categoryId: string; // ID of the event category
+  groupId: string;
+  categoryId: string;
   date: string; // ISO date string
   startTime: string;
   endTime: string;
@@ -20,7 +20,7 @@ export interface Event {
   };
   maxParticipants: number;
   currentParticipants: number;
-  imageUrl: string; // URL to event image
+  imageUrl: string;
 }
 
 interface EventState {
