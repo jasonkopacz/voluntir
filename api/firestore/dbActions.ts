@@ -25,7 +25,6 @@ export const addRecord = async <T extends Record<string, any>>(
   data: Omit<T, 'id'>
 ): Promise<T> => {
   try {
-    console.log(collectionName);
     const docRef = await firestore().collection(collectionName).add(data);
     const newDoc = await docRef.get();
     return { id: newDoc.id, ...newDoc.data() } as unknown as T;
