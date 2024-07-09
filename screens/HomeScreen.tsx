@@ -1,28 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, SafeAreaView } from 'react-native';
-import EventsList from '../components/Event/EventList';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
+import { useAppDispatch, useAppSelector } from '~/redux/hooks';
+import { RootState } from '~/redux/store';
+import { fetchEvents } from '~/redux/actions/events/eventActions';
+import EventsList from '~/components/Event/EventList';
+import { Event } from '~/redux/slices/events/eventSlice';
 
 const HomeScreen: React.FC = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+  const dispatch = useAppDispatch();
+  const { byId, allIds, isLoading, error } = useAppSelector((state: RootState) => state.events);
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
+    dispatch(fetchEvents());
+  }, [dispatch]);
 
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch('YOUR_API_ENDPOINT_HERE');
-      const data = await response.json();
-      setEvents(data);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    }
-  };
+  const events = allIds.map((id) => byId[id]);
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Upcoming Events</Text>
-      <EventsList events={events} />
+      <EventsList events={events as Event[]} />
     </SafeAreaView>
   );
 };
@@ -35,6 +47,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    margin: 16,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 18,
+    textAlign: 'center',
     margin: 16,
   },
 });
