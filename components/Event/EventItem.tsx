@@ -3,13 +3,11 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { Event } from '~/redux/slices/events/eventSlice';
 
 const EventItem = ({ event }: { event: Event }) => {
-  if (!event.title) {
-    return null;
-  }
+  if (!event) return null;
+
   return (
     <View style={styles.eventItem}>
       <Image source={{ uri: event.imageUrl }} style={styles.eventImage} />
-      {console.log(event)}
       <View style={styles.eventDetails}>
         <Text style={styles.eventTitle}>{event.title}</Text>
         <Text>{`${event.date} ${event.startTime} - ${event.endTime}`}</Text>
