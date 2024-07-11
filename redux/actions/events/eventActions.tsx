@@ -35,7 +35,6 @@ export const fetchEvent = createAsyncThunk(
 export const addEvent = createAsyncThunk(
   'event/addEvent',
   async (eventData: Omit<Event, 'id'>, { dispatch }) => {
-    console.log('event');
     try {
       dispatch(setEventLoading(true));
       const newEvent = await addRecord<Event>(COLLECTION_NAME, eventData);
