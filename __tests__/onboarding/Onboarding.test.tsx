@@ -43,8 +43,8 @@ describe('OnboardingQuestionnaire', () => {
 
     store = mockStore({
       categories: {
-        ids: mockCategories,
-        entities: Object.keys(mockCategories),
+        byId: mockCategories,
+        allIds: Object.keys(mockCategories),
         isLoading: false,
         error: null,
       },

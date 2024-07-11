@@ -11,7 +11,7 @@ interface CategoryScrollProps {
 const CategoryScroll: React.FC<CategoryScrollProps> = ({ onCategorySelect }) => {
   const categoriesState = useAppSelector((state: RootState) => state.categories);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  console.log(categoriesState);
+
   const handleCategoryPress = (categoryId: string) => {
     setSelectedCategories((prevCategories) => {
       const updatedCategories = prevCategories.includes(categoryId)
@@ -28,8 +28,8 @@ const CategoryScroll: React.FC<CategoryScrollProps> = ({ onCategorySelect }) => 
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
-        {categoriesState.entities.map((categoryId) => {
-          const category: Category = categoriesState.ids[categoryId];
+        {categoriesState.allIds.map((categoryId) => {
+          const category: Category = categoriesState.byId[categoryId];
           return (
             <TouchableOpacity
               key={category.id}

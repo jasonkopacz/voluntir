@@ -8,7 +8,6 @@ import { Event } from '~/redux/slices/events/eventSlice';
 import { Group } from '~/redux/slices/groups/groupSlice';
 import CategoryScroll from '~/components/Category/CategoryScroll';
 import { fetchGroups } from '~/redux/actions/groups/groupActions';
-import GroupsList from '~/components/Group/GroupsList';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,14 +15,11 @@ const HomeScreen: React.FC = () => {
   const groupsState = useAppSelector((state: RootState) => state.groups);
 
   const [groups, setGroups] = useState<Group[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
   const [filteredGroups, setFilteredGroups] = useState<Group[]>([]);
 
   useEffect(() => {
     dispatch(fetchEvents());
     dispatch(fetchGroups());
-    setEvents(eventsState.entities.map((id) => eventsState.ids[id]));
-    setGroups(groupsState.entities.map((id) => groupsState.ids[id]));
   }, [dispatch]);
 
   const handleCategorySelect = (selectedCategories: string[]) => {
@@ -37,6 +33,7 @@ const HomeScreen: React.FC = () => {
     }
   };
 
+  const events = eventsState.allIds.map((id) => eventsState.byId[id]);
   if (eventsState.isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -58,8 +55,7 @@ const HomeScreen: React.FC = () => {
       <CategoryScroll onCategorySelect={handleCategorySelect} />
       <Text style={styles.title}>Upcoming Events</Text>
       <EventsList events={events as Event[]} />
-      <Text style={styles.title}>Local Groups</Text>
-      <GroupsList groups={groups as Group[]} />
+      {/* Groups List */}
     </SafeAreaView>
   );
 };
