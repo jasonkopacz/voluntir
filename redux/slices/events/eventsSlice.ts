@@ -4,8 +4,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Event } from './eventSlice';
 
 interface EventsState {
-  byId: { [key: string]: Event };
-  allIds: string[];
+  ids: { [key: string]: Event };
+  entities: string[];
   isLoading: boolean;
   error: string | null;
 }
@@ -74,15 +74,15 @@ const initialEvents: Event[] = [
 ];
 
 const initialState: EventsState = {
-  byId: {},
-  allIds: [],
+  ids: {},
+  entities: [],
   isLoading: false,
   error: null,
 };
 
 initialEvents.forEach((event) => {
-  initialState.byId[event.id] = event;
-  initialState.allIds.push(event.id);
+  initialState.ids[event.id] = event;
+  initialState.entities.push(event.id);
 });
 
 const eventsSlice = createSlice({
@@ -90,26 +90,26 @@ const eventsSlice = createSlice({
   initialState,
   reducers: {
     addEvent: (state, action: PayloadAction<Event>) => {
-      state.byId[action.payload.id] = action.payload;
-      if (!state.allIds.includes(action.payload.id)) {
-        state.allIds.push(action.payload.id);
+      state.ids[action.payload.id] = action.payload;
+      if (!state.entities.includes(action.payload.id)) {
+        state.entities.push(action.payload.id);
       }
     },
     updateEvent: (state, action: PayloadAction<Event>) => {
-      if (state.byId[action.payload.id]) {
-        state.byId[action.payload.id] = action.payload;
+      if (state.ids[action.payload.id]) {
+        state.ids[action.payload.id] = action.payload;
       }
     },
     removeEvent: (state, action: PayloadAction<string>) => {
-      delete state.byId[action.payload];
-      state.allIds = state.allIds.filter((id) => id !== action.payload);
+      delete state.ids[action.payload];
+      state.entities = state.entities.filter((id) => id !== action.payload);
     },
     setEvents: (state, action: PayloadAction<Event[]>) => {
-      state.byId = {};
-      state.allIds = [];
+      state.ids = {};
+      state.entities = [];
       action.payload.forEach((event) => {
-        state.byId[event.id] = event;
-        state.allIds.push(event.id);
+        state.ids[event.id] = event;
+        state.entities.push(event.id);
       });
     },
     setEventsLoading: (state, action: PayloadAction<boolean>) => {

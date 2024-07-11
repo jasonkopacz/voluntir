@@ -4,8 +4,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Category } from './categorySlice';
 
 interface CategoriesState {
-  byId: { [key: string]: Category };
-  allIds: string[];
+  ids: { [key: string]: Category };
+  entities: string[];
   isLoading: boolean;
   error: string | null;
 }
@@ -110,15 +110,15 @@ const initialCategories: Category[] = [
 ];
 
 const initialState: CategoriesState = {
-  byId: {},
-  allIds: [],
+  ids: {},
+  entities: [],
   isLoading: false,
   error: null,
 };
 
 initialCategories.forEach((category) => {
-  initialState.byId[category.id] = category;
-  initialState.allIds.push(category.id);
+  initialState.ids[category.id] = category;
+  initialState.entities.push(category.id);
 });
 
 const categoriesSlice = createSlice({
@@ -126,26 +126,26 @@ const categoriesSlice = createSlice({
   initialState,
   reducers: {
     addCategory: (state, action: PayloadAction<Category>) => {
-      state.byId[action.payload.id] = action.payload;
-      if (!state.allIds.includes(action.payload.id)) {
-        state.allIds.push(action.payload.id);
+      state.ids[action.payload.id] = action.payload;
+      if (!state.entities.includes(action.payload.id)) {
+        state.entities.push(action.payload.id);
       }
     },
     updateCategory: (state, action: PayloadAction<Category>) => {
-      if (state.byId[action.payload.id]) {
-        state.byId[action.payload.id] = action.payload;
+      if (state.ids[action.payload.id]) {
+        state.ids[action.payload.id] = action.payload;
       }
     },
     removeCategory: (state, action: PayloadAction<string>) => {
-      delete state.byId[action.payload];
-      state.allIds = state.allIds.filter((id) => id !== action.payload);
+      delete state.ids[action.payload];
+      state.entities = state.entities.filter((id) => id !== action.payload);
     },
     setCategories: (state, action: PayloadAction<Category[]>) => {
-      state.byId = {};
-      state.allIds = [];
+      state.ids = {};
+      state.entities = [];
       action.payload.forEach((category) => {
-        state.byId[category.id] = category;
-        state.allIds.push(category.id);
+        state.ids[category.id] = category;
+        state.entities.push(category.id);
       });
     },
     setCategoriesLoading: (state, action: PayloadAction<boolean>) => {

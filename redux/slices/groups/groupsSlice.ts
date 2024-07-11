@@ -4,8 +4,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Group } from './groupSlice';
 
 interface GroupsState {
-  byId: { [key: string]: Group };
-  allIds: string[];
+  ids: { [key: string]: Group };
+  entities: string[];
   isLoading: boolean;
   error: string | null;
 }
@@ -65,15 +65,15 @@ const initialGroups: Group[] = [
 ];
 
 const initialState: GroupsState = {
-  byId: {},
-  allIds: [],
+  ids: {},
+  entities: [],
   isLoading: false,
   error: null,
 };
 
 initialGroups.forEach((group) => {
-  initialState.byId[group.id] = group;
-  initialState.allIds.push(group.id);
+  initialState.ids[group.id] = group;
+  initialState.entities.push(group.id);
 });
 
 const groupsSlice = createSlice({
@@ -81,26 +81,26 @@ const groupsSlice = createSlice({
   initialState,
   reducers: {
     addGroup: (state, action: PayloadAction<Group>) => {
-      state.byId[action.payload.id] = action.payload;
-      if (!state.allIds.includes(action.payload.id)) {
-        state.allIds.push(action.payload.id);
+      state.ids[action.payload.id] = action.payload;
+      if (!state.entities.includes(action.payload.id)) {
+        state.entities.push(action.payload.id);
       }
     },
     updateGroup: (state, action: PayloadAction<Group>) => {
-      if (state.byId[action.payload.id]) {
-        state.byId[action.payload.id] = action.payload;
+      if (state.ids[action.payload.id]) {
+        state.ids[action.payload.id] = action.payload;
       }
     },
     removeGroup: (state, action: PayloadAction<string>) => {
-      delete state.byId[action.payload];
-      state.allIds = state.allIds.filter((id) => id !== action.payload);
+      delete state.ids[action.payload];
+      state.entities = state.entities.filter((id) => id !== action.payload);
     },
     setGroups: (state, action: PayloadAction<Group[]>) => {
-      state.byId = {};
-      state.allIds = [];
+      state.ids = {};
+      state.entities = [];
       action.payload.forEach((group) => {
-        state.byId[group.id] = group;
-        state.allIds.push(group.id);
+        state.ids[group.id] = group;
+        state.entities.push(group.id);
       });
     },
     setGroupsLoading: (state, action: PayloadAction<boolean>) => {

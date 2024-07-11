@@ -11,8 +11,8 @@ import usersReducer, {
 
 describe('usersSlice', () => {
   const initialState = {
-    byId: {},
-    allIds: [],
+    ids: {},
+    entities: [],
     isLoading: false,
     error: null,
   };
@@ -44,14 +44,14 @@ describe('usersSlice', () => {
   describe('addUser', () => {
     it('should add a new user', () => {
       const actual = usersReducer(initialState, addUser(mockUser1));
-      expect(actual.byId).toEqual({ [mockUser1.id]: mockUser1 });
-      expect(actual.allIds).toEqual([mockUser1.id]);
+      expect(actual.ids).toEqual({ [mockUser1.id]: mockUser1 });
+      expect(actual.entities).toEqual([mockUser1.id]);
     });
 
-    it('should not duplicate user id in allIds', () => {
+    it('should not duplicate user id in entities', () => {
       const stateWithUser = usersReducer(initialState, addUser(mockUser1));
       const actual = usersReducer(stateWithUser, addUser(mockUser1));
-      expect(actual.allIds).toEqual([mockUser1.id]);
+      expect(actual.entities).toEqual([mockUser1.id]);
     });
   });
 
@@ -60,7 +60,7 @@ describe('usersSlice', () => {
       const stateWithUser = usersReducer(initialState, addUser(mockUser1));
       const updatedUser = { ...mockUser1, firstName: 'Johnny' };
       const actual = usersReducer(stateWithUser, updateUser(updatedUser));
-      expect(actual.byId[mockUser1.id]).toEqual(updatedUser);
+      expect(actual.ids[mockUser1.id]).toEqual(updatedUser);
     });
 
     it("should not add a new user if it doesn't exist", () => {
@@ -73,8 +73,8 @@ describe('usersSlice', () => {
     it('should remove an existing user', () => {
       const stateWithUser = usersReducer(initialState, addUser(mockUser1));
       const actual = usersReducer(stateWithUser, removeUser(mockUser1.id));
-      expect(actual.byId).toEqual({});
-      expect(actual.allIds).toEqual([]);
+      expect(actual.ids).toEqual({});
+      expect(actual.entities).toEqual([]);
     });
 
     it("should not change state if user doesn't exist", () => {
@@ -87,18 +87,18 @@ describe('usersSlice', () => {
     it('should set multiple users', () => {
       const users = [mockUser1, mockUser2];
       const actual = usersReducer(initialState, setUsers(users));
-      expect(actual.byId).toEqual({
+      expect(actual.ids).toEqual({
         [mockUser1.id]: mockUser1,
         [mockUser2.id]: mockUser2,
       });
-      expect(actual.allIds).toEqual([mockUser1.id, mockUser2.id]);
+      expect(actual.entities).toEqual([mockUser1.id, mockUser2.id]);
     });
 
     it('should replace existing users', () => {
       const stateWithUser = usersReducer(initialState, addUser(mockUser1));
       const actual = usersReducer(stateWithUser, setUsers([mockUser2]));
-      expect(actual.byId).toEqual({ [mockUser2.id]: mockUser2 });
-      expect(actual.allIds).toEqual([mockUser2.id]);
+      expect(actual.ids).toEqual({ [mockUser2.id]: mockUser2 });
+      expect(actual.entities).toEqual([mockUser2.id]);
     });
   });
 
@@ -117,11 +117,11 @@ describe('usersSlice', () => {
     it('should handle adding multiple users and then removing one', () => {
       let state = usersReducer(initialState, addUser(mockUser1));
       state = usersReducer(state, addUser(mockUser2));
-      expect(state.allIds.length).toBe(2);
+      expect(state.entities.length).toBe(2);
 
       state = usersReducer(state, removeUser(mockUser1.id));
-      expect(state.allIds.length).toBe(1);
-      expect(state.byId[mockUser2.id]).toEqual(mockUser2);
+      expect(state.entities.length).toBe(1);
+      expect(state.ids[mockUser2.id]).toEqual(mockUser2);
     });
 
     it('should handle setting users, updating one, and then removing one', () => {
@@ -132,8 +132,8 @@ describe('usersSlice', () => {
 
       state = usersReducer(state, removeUser(mockUser2.id));
 
-      expect(state.byId).toEqual({ [mockUser1.id]: updatedUser1 });
-      expect(state.allIds).toEqual([mockUser1.id]);
+      expect(state.ids).toEqual({ [mockUser1.id]: updatedUser1 });
+      expect(state.entities).toEqual([mockUser1.id]);
     });
 
     it('should maintain loading and error states when modifying users', () => {
@@ -143,7 +143,7 @@ describe('usersSlice', () => {
 
       expect(state.isLoading).toBe(true);
       expect(state.error).toBe('An error');
-      expect(state.byId[mockUser1.id]).toEqual(mockUser1);
+      expect(state.ids[mockUser1.id]).toEqual(mockUser1);
     });
   });
 });

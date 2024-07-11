@@ -22,7 +22,7 @@ const { width } = Dimensions.get('window');
 
 const OnboardingQuestionnaire: React.FC = () => {
   const dispatch = useAppDispatch();
-  const categories = useAppSelector((state) => state.categories.byId);
+  const categories = useAppSelector((state) => state.categories.ids);
   const [step, setStep] = useState(0);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);

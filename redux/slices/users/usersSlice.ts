@@ -13,15 +13,15 @@ interface User {
 }
 
 interface UsersState {
-  byId: { [key: string]: User };
-  allIds: string[];
+  ids: { [key: string]: User };
+  entities: string[];
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: UsersState = {
-  byId: {},
-  allIds: [],
+  ids: {},
+  entities: [],
   isLoading: false,
   error: null,
 };
@@ -31,26 +31,26 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     addUser: (state, action: PayloadAction<User>) => {
-      state.byId[action.payload.id] = action.payload;
-      if (!state.allIds.includes(action.payload.id)) {
-        state.allIds.push(action.payload.id);
+      state.ids[action.payload.id] = action.payload;
+      if (!state.entities.includes(action.payload.id)) {
+        state.entities.push(action.payload.id);
       }
     },
     updateUser: (state, action: PayloadAction<User>) => {
-      if (state.byId[action.payload.id]) {
-        state.byId[action.payload.id] = action.payload;
+      if (state.ids[action.payload.id]) {
+        state.ids[action.payload.id] = action.payload;
       }
     },
     removeUser: (state, action: PayloadAction<string>) => {
-      delete state.byId[action.payload];
-      state.allIds = state.allIds.filter((id) => id !== action.payload);
+      delete state.ids[action.payload];
+      state.entities = state.entities.filter((id) => id !== action.payload);
     },
     setUsers: (state, action: PayloadAction<User[]>) => {
-      state.byId = {};
-      state.allIds = [];
+      state.ids = {};
+      state.entities = [];
       action.payload.forEach((user) => {
-        state.byId[user.id] = user;
-        state.allIds.push(user.id);
+        state.ids[user.id] = user;
+        state.entities.push(user.id);
       });
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
