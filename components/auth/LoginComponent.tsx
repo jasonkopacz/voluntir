@@ -33,10 +33,9 @@ export default function LoginComponent() {
 
       if (firebaseUser) {
         try {
-          const existingUser = await getRecord<User>('users', firebaseUser.uid);
-          if (existingUser) {
-            await dispatch(login(existingUser));
-            console.log('User signed in successfully:', existingUser);
+          const userProfile = await dispatch(login(firebaseUser.uid));
+          if (userProfile) {
+            console.log('success');
           } else {
             console.log('New user');
             const newUser: User = {

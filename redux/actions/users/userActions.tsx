@@ -68,13 +68,12 @@ export const deleteUser = createAsyncThunk(
     }
   }
 );
-
-export const login = createAsyncThunk<User | null, User>(
+export const login = createAsyncThunk<User | null, string>(
   'auth/login',
-  async (user: User, { dispatch, rejectWithValue }) => {
+  async (userId: string, { dispatch, rejectWithValue }) => {
     try {
       dispatch(setLoading(true));
-      const userProfile = await getRecord<User>(COLLECTION_NAME, user.id);
+      const userProfile = await getRecord<User>(COLLECTION_NAME, userId);
       if (userProfile) {
         dispatch(setCurrentUser(userProfile));
         return userProfile;

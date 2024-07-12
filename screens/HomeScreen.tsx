@@ -9,6 +9,7 @@ import { Group } from '~/redux/slices/groups/groupSlice';
 import CategoryScroll from '~/components/Category/CategoryScroll';
 import { fetchGroups } from '~/redux/actions/groups/groupActions';
 import GroupsList from '~/components/Group/GroupsList';
+import { clearStateAndCache } from '~/utils/stateManagement';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -52,6 +53,10 @@ const HomeScreen: React.FC = () => {
       </SafeAreaView>
     );
   }
+
+  const handleResetApp = async () => {
+    await clearStateAndCache();
+  };
 
   const renderItem = () => (
     <View style={styles.content}>
