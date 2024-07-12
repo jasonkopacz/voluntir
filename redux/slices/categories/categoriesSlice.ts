@@ -40,8 +40,10 @@ const categoriesSlice = createSlice({
       state.byId = {};
       state.allIds = [];
       action.payload.forEach((category) => {
-        state.byId[category.id] = category;
-        state.allIds.push(category.id);
+        if (!state.byId[category.id]) {
+          state.byId[category.id] = category;
+          state.allIds.push(category.id);
+        }
       });
     },
     setCategoriesLoading: (state, action: PayloadAction<boolean>) => {
