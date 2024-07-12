@@ -5,7 +5,6 @@ import { useAppDispatch } from '~/redux/hooks';
 import { login, signup } from '~/redux/actions/users/userActions';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { User } from '~/redux/slices/users/userSlice';
-import { getRecord } from '~/api/firestore/dbActions';
 
 const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID as string;
 

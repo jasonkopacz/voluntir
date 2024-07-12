@@ -39,9 +39,15 @@ const groupsSlice = createSlice({
     setGroups: (state, action: PayloadAction<Group[]>) => {
       state.byId = {};
       state.allIds = [];
+      const uniqueGroups = new Map<string, Group>();
       action.payload.forEach((group) => {
-        state.byId[group.id] = group;
-        state.allIds.push(group.id);
+        if (!uniqueGroups.has(group.id)) {
+          uniqueGroups.set(group.id, group);
+        }
+      });
+      uniqueGroups.forEach((group, id) => {
+        state.byId[id] = group;
+        state.allIds.push(id);
       });
     },
     setGroupsLoading: (state, action: PayloadAction<boolean>) => {
