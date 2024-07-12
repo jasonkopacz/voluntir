@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, SafeAreaView, ActivityIndicator, FlatList } from 'react-native';
 import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { RootState } from '~/redux/store';
 import { fetchEvents } from '~/redux/actions/events/eventActions';
-import EventsList from '~/components/Event/EventList';
+import EventsList from '~/components/Event/EventsList';
 import { Event } from '~/redux/slices/events/eventSlice';
 import { Group } from '~/redux/slices/groups/groupSlice';
 import CategoryScroll from '~/components/Category/CategoryScroll';
@@ -53,14 +53,23 @@ const HomeScreen: React.FC = () => {
     );
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <CategoryScroll onCategorySelect={handleCategorySelect} />
+  const renderItem = () => (
+    <View style={styles.content}>
       <Text style={styles.title}>Upcoming Events</Text>
       <EventsList events={events as Event[]} />
       <Text style={styles.title}>Local Groups</Text>
       <GroupsList groups={filteredGroups as Group[]} />
-      {/* <GroupsList groups={filteredGroups as Group[]} /> */}
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        ListHeaderComponent={<CategoryScroll onCategorySelect={handleCategorySelect} />}
+        data={[{ key: 'content' }]}
+        renderItem={renderItem}
+        stickyHeaderIndices={[0]}
+      />
     </SafeAreaView>
   );
 };
@@ -69,6 +78,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
+  },
+  content: {
+    flex: 1,
   },
   title: {
     fontSize: 24,
