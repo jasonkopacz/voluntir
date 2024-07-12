@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, Action, combineReducers } from '@reduxjs/toolkit';
 import {
   persistStore,
   persistReducer,
@@ -18,7 +18,14 @@ const persistConfig = {
   storage: AsyncStorage,
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const resettableRootReducer = (state: any, action: Action) => {
+  if (action.type === 'RESET_STATE') {
+    state = undefined;
+  }
+  return rootReducer(state, action);
+};
+
+const persistedReducer = persistReducer(persistConfig, resettableRootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,

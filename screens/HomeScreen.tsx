@@ -5,10 +5,12 @@ import { RootState } from '~/redux/store';
 import { fetchEvents } from '~/redux/actions/events/eventActions';
 import EventsList from '~/components/Event/EventsList';
 import { Event } from '~/redux/slices/events/eventSlice';
-import { Group } from '~/redux/slices/groups/groupSlice';
-import CategoryScroll from '~/components/Category/CategoryScroll';
 import { fetchGroups } from '~/redux/actions/groups/groupActions';
 import GroupsList from '~/components/Group/GroupsList';
+import { Group } from '~/redux/slices/groups/groupSlice';
+import { fetchCategories } from '~/redux/actions/categories/categoryActions';
+import CategoryScroll from '~/components/Category/CategoryScroll';
+// import { clearStateAndCache } from '~/utils/stateManagement';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,8 +24,10 @@ const HomeScreen: React.FC = () => {
   useEffect(() => {
     dispatch(fetchEvents());
     dispatch(fetchGroups());
+    dispatch(fetchCategories());
     setEvents(eventsState.allIds.map((id) => eventsState.byId[id]));
     setGroups(groupsState.allIds.map((id) => groupsState.byId[id]));
+    setFilteredGroups(groupsState.allIds.map((id) => groupsState.byId[id]));
   }, [dispatch]);
 
   const handleCategorySelect = (selectedCategories: string[]) => {
@@ -52,6 +56,10 @@ const HomeScreen: React.FC = () => {
       </SafeAreaView>
     );
   }
+
+  // const handleResetApp = async () => {
+  //   await clearStateAndCache();
+  // };
 
   const renderItem = () => (
     <View style={styles.content}>
