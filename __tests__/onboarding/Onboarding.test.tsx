@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
-import OnboardingQuestionnaire from '~/components/onboarding/OnboardingQuestionnaire';
+import OnboardingQuestionnaire from '~/components/Onboarding/OnboardingQuestionnaire';
 import { RootState } from '~/redux/store';
 import { Category } from '~/redux/slices/categories/categorySlice';
 

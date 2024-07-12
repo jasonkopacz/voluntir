@@ -8,7 +8,7 @@ export interface Event {
   description: string;
   groupId: string;
   categoryId: string;
-  date: string; // ISO date string
+  date: string;
   startTime: string;
   endTime: string;
   location: {

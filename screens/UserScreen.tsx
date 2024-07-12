@@ -28,7 +28,6 @@ const UserItem: React.FC<{ user: User }> = ({ user }) => (
 
 const UserScreen: React.FC = () => {
   const user = useAppSelector((state) => state.user.currentUser);
-  console.log(user);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Users List</Text>

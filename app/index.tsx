@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useAppSelector } from '../redux/hooks';
 import BottomTabNavigator from '../navigation/BottomTabNavigator';
 import LoginComponent from '~/components/auth/LoginComponent';
-import OnboardingQuestionnaire from '../components/onboarding/OnboardingQuestionnaire';
+import OnboardingQuestionnaire from '../components/Onboarding/OnboardingQuestionnaire';
 
 export default function Index(): JSX.Element {
   const user = useAppSelector((state) => state.user.currentUser);
