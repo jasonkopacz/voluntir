@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, ActivityIndicator, FlatList } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, Animated } from 'react-native';
 import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { RootState } from '~/redux/store';
 import { fetchEvents } from '~/redux/actions/events/eventActions';
 import EventsList from '~/components/Event/EventsList';
 import { Event } from '~/redux/slices/events/eventSlice';
+import { Group } from '~/redux/slices/groups/groupSlice';
+import CategoryScroll from '~/components/Category/CategoryScroll';
 import { fetchGroups } from '~/redux/actions/groups/groupActions';
 import GroupsList from '~/components/Group/GroupsList';
-import { Group } from '~/redux/slices/groups/groupSlice';
-import { fetchCategories } from '~/redux/actions/categories/categoryActions';
-import CategoryScroll from '~/components/Category/CategoryScroll';
-// import { clearStateAndCache } from '~/utils/stateManagement';
+
+const HEADER_MIN_HEIGHT = 60;
+const SELECTED_ROW_HEIGHT = 40;
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -20,22 +21,24 @@ const HomeScreen: React.FC = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredGroups, setFilteredGroups] = useState<Group[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     dispatch(fetchEvents());
     dispatch(fetchGroups());
-    dispatch(fetchCategories());
     setEvents(eventsState.allIds.map((id) => eventsState.byId[id]));
     setGroups(groupsState.allIds.map((id) => groupsState.byId[id]));
-    setFilteredGroups(groupsState.allIds.map((id) => groupsState.byId[id]));
   }, [dispatch]);
 
-  const handleCategorySelect = (selectedCategories: string[]) => {
-    if (selectedCategories.length === 0) {
+  const handleCategorySelect = (categories: string[]) => {
+    setSelectedCategories(categories);
+    if (categories.length === 0) {
       setFilteredGroups(groups);
     } else {
       const filtered = groups.filter((group) =>
-        group.categoryIds.some((category) => selectedCategories.includes(category))
+        group.categoryIds.some((category) => categories.includes(category))
       );
       setFilteredGroups(filtered);
     }
@@ -57,10 +60,6 @@ const HomeScreen: React.FC = () => {
     );
   }
 
-  // const handleResetApp = async () => {
-  //   await clearStateAndCache();
-  // };
-
   const renderItem = () => (
     <View style={styles.content}>
       <Text style={styles.title}>Upcoming Events</Text>
@@ -70,13 +69,20 @@ const HomeScreen: React.FC = () => {
     </View>
   );
 
+  const contentPaddingTop =
+    selectedCategories.length > 0 ? HEADER_MIN_HEIGHT + SELECTED_ROW_HEIGHT : HEADER_MIN_HEIGHT;
+
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        ListHeaderComponent={<CategoryScroll onCategorySelect={handleCategorySelect} />}
+      <CategoryScroll onCategorySelect={handleCategorySelect} scrollY={scrollY} />
+      <Animated.FlatList
         data={[{ key: 'content' }]}
         renderItem={renderItem}
-        stickyHeaderIndices={[0]}
+        scrollEventThrottle={16}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+          useNativeDriver: false,
+        })}
+        contentContainerStyle={{ paddingTop: contentPaddingTop }}
       />
     </SafeAreaView>
   );

@@ -40,8 +40,10 @@ const eventsSlice = createSlice({
       state.byId = {};
       state.allIds = [];
       action.payload.forEach((event) => {
-        state.byId[event.id] = event;
-        state.allIds.push(event.id);
+        if (!state.byId[event.id]) {
+          state.byId[event.id] = event;
+          state.allIds.push(event.id);
+        }
       });
     },
     setEventsLoading: (state, action: PayloadAction<boolean>) => {
