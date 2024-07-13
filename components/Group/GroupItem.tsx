@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupItem;
+export default React.memo(GroupItem);
