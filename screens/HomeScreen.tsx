@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Animated,
   TouchableOpacity,
+  ListRenderItem,
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { RootState } from '~/redux/store';
@@ -21,6 +22,10 @@ import GroupsList from '~/components/Group/GroupsList';
 const HEADER_MIN_HEIGHT = 60;
 const SELECTED_ROW_HEIGHT = 40;
 const INITIAL_LOAD_COUNT = 5;
+
+interface ContentItem {
+  key: string;
+}
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -37,7 +42,7 @@ const HomeScreen: React.FC = () => {
     dispatch(fetchGroups());
   }, [dispatch]);
 
-  const filteredGroups = useMemo(() => {
+  const filteredGroups = useMemo((): Group[] => {
     return selectedCategories.length === 0
       ? groupsState.allIds.map((id) => groupsState.byId[id])
       : groupsState.allIds
@@ -47,7 +52,7 @@ const HomeScreen: React.FC = () => {
           );
   }, [groupsState, selectedCategories]);
 
-  const filteredEvents = useMemo(() => {
+  const filteredEvents = useMemo((): Event[] => {
     return selectedCategories.length === 0
       ? eventsState.allIds.map((id) => eventsState.byId[id])
       : eventsState.allIds
@@ -69,23 +74,7 @@ const HomeScreen: React.FC = () => {
     setDisplayedEventsCount((prevCount) => prevCount + INITIAL_LOAD_COUNT);
   }, []);
 
-  if (eventsState.isLoading || groupsState.isLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </SafeAreaView>
-    );
-  }
-
-  if (eventsState.error || groupsState.error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>{eventsState.error || groupsState.error}</Text>
-      </SafeAreaView>
-    );
-  }
-
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<ContentItem> = useCallback(
     () => (
       <View style={styles.content}>
         <Text style={styles.title}>Upcoming Events</Text>
@@ -113,6 +102,21 @@ const HomeScreen: React.FC = () => {
       handleSeeMoreGroups,
     ]
   );
+  if (eventsState.isLoading || groupsState.isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
+
+  if (eventsState.error || groupsState.error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>{eventsState.error || groupsState.error}</Text>
+      </SafeAreaView>
+    );
+  }
 
   const contentPaddingTop =
     selectedCategories.length > 0 ? HEADER_MIN_HEIGHT + SELECTED_ROW_HEIGHT : HEADER_MIN_HEIGHT;
@@ -120,7 +124,7 @@ const HomeScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <CategoryScroll onCategorySelect={handleCategorySelect} scrollY={scrollY} />
-      <Animated.FlatList
+      <Animated.FlatList<ContentItem>
         data={[{ key: 'content' }]}
         renderItem={renderItem}
         scrollEventThrottle={16}
