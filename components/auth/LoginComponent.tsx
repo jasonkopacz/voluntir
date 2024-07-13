@@ -5,6 +5,7 @@ import { useAppDispatch } from '~/redux/hooks';
 import { login, signup } from '~/redux/actions/users/userActions';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { User } from '~/redux/slices/users/userSlice';
+import useAsyncStorage from '~/redux/hooks';
 
 const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID as string;
 
@@ -12,6 +13,7 @@ export default function LoginComponent() {
   const dispatch = useAppDispatch();
   const [error, setError] = useState<Error | undefined>();
   const [isLoading, setIsLoading] = useState(false);
+  const [storedUser, setStoredUser] = useAsyncStorage<User | null>('logged-in-user', null);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -27,9 +29,7 @@ export default function LoginComponent() {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const user = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(user.idToken);
-      console.log('google', googleCredential);
       const userCredential = await auth().signInWithCredential(googleCredential);
-      console.log('user', userCredential);
       const firebaseUser = userCredential.user;
 
       if (firebaseUser) {

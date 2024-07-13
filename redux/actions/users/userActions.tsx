@@ -2,16 +2,17 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setCurrentUser, setLoading, setError, User } from '../../slices/users/userSlice';
 import { getRecord, addRecord, updateRecord, deleteRecord } from '../../../api/firestore/dbActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import useAsyncStorage from '~/redux/hooks';
 const COLLECTION_NAME = 'users';
 
 export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (userId: string, { dispatch }) => {
+    const [storedUser, setStoredUser] = useAsyncStorage<User | null>('logged-in-user', null);
     try {
       dispatch(setLoading(true));
       const user = await getRecord<User>(COLLECTION_NAME, userId);
-      AsyncStorage.setItem('auth', JSON.stringify(user));
+      setStoredUser(user);
       dispatch(setCurrentUser(user));
     } catch (error: any) {
       dispatch(setError(error.message));
@@ -71,11 +72,13 @@ export const deleteUser = createAsyncThunk(
 export const login = createAsyncThunk<User | null, string>(
   'auth/login',
   async (userId: string, { dispatch, rejectWithValue }) => {
+    const [storedUser, setStoredUser] = useAsyncStorage<User | null>('logged-in-user', null);
     try {
       dispatch(setLoading(true));
       const userProfile = await getRecord<User>(COLLECTION_NAME, userId);
       if (userProfile) {
         dispatch(setCurrentUser(userProfile));
+        setStoredUser(userProfile);
         return userProfile;
       } else {
         console.log('User not found');
@@ -93,10 +96,12 @@ export const login = createAsyncThunk<User | null, string>(
 export const signup = createAsyncThunk<User, User>(
   'auth/signup',
   async (user: User, { dispatch, rejectWithValue }) => {
+    const [storedUser, setStoredUser] = useAsyncStorage<User | null>('logged-in-user', null);
     try {
       dispatch(setLoading(true));
       const userProfile = await addRecord<User>(COLLECTION_NAME, user);
       dispatch(setCurrentUser(userProfile));
+      setStoredUser(userProfile);
       return userProfile;
     } catch (error) {
       dispatch(setError(error instanceof Error ? error.message : 'An unknown error occurred'));
@@ -108,9 +113,11 @@ export const signup = createAsyncThunk<User, User>(
 );
 
 export const logout = createAsyncThunk('auth/logout', async (_, { dispatch }) => {
+  const [storedUser, setStoredUser] = useAsyncStorage<User | null>('logged-in-user', null);
   try {
     dispatch(setLoading(true));
     dispatch(setCurrentUser(null));
+    setStoredUser(null);
   } catch (error: any) {
     dispatch(setError(error.message));
     throw error;
