@@ -1,5 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, Animated } from 'react-native';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ActivityIndicator,
+  Animated,
+  TouchableOpacity,
+} from 'react-native';
 import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { RootState } from '~/redux/store';
 import { fetchEvents } from '~/redux/actions/events/eventActions';
@@ -12,39 +20,56 @@ import GroupsList from '~/components/Group/GroupsList';
 
 const HEADER_MIN_HEIGHT = 60;
 const SELECTED_ROW_HEIGHT = 40;
+const INITIAL_LOAD_COUNT = 5;
 
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const eventsState = useAppSelector((state: RootState) => state.events);
   const groupsState = useAppSelector((state: RootState) => state.groups);
 
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [filteredGroups, setFilteredGroups] = useState<Group[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
+  const [displayedGroupsCount, setDisplayedGroupsCount] = useState(INITIAL_LOAD_COUNT);
+  const [displayedEventsCount, setDisplayedEventsCount] = useState(INITIAL_LOAD_COUNT);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     dispatch(fetchEvents());
     dispatch(fetchGroups());
-    setEvents(eventsState.allIds.map((id) => eventsState.byId[id]));
-    setGroups(groupsState.allIds.map((id) => groupsState.byId[id]));
   }, [dispatch]);
 
-  const handleCategorySelect = (categories: string[]) => {
-    setSelectedCategories(categories);
-    if (categories.length === 0) {
-      setFilteredGroups(groups);
-    } else {
-      const filtered = groups.filter((group) =>
-        group.categoryIds.some((category) => categories.includes(category))
-      );
-      setFilteredGroups(filtered);
-    }
-  };
+  const filteredGroups = useMemo(() => {
+    return selectedCategories.length === 0
+      ? groupsState.allIds.map((id) => groupsState.byId[id])
+      : groupsState.allIds
+          .map((id) => groupsState.byId[id])
+          .filter((group) =>
+            group.categoryIds.some((category) => selectedCategories.includes(category))
+          );
+  }, [groupsState, selectedCategories]);
 
-  if (eventsState.isLoading) {
+  const filteredEvents = useMemo(() => {
+    return selectedCategories.length === 0
+      ? eventsState.allIds.map((id) => eventsState.byId[id])
+      : eventsState.allIds
+          .map((id) => eventsState.byId[id])
+          .filter((event) => selectedCategories.includes(event.categoryId));
+  }, [eventsState, selectedCategories]);
+
+  const handleCategorySelect = useCallback((categories: string[]) => {
+    setSelectedCategories(categories);
+    setDisplayedGroupsCount(INITIAL_LOAD_COUNT);
+    setDisplayedEventsCount(INITIAL_LOAD_COUNT);
+  }, []);
+
+  const handleSeeMoreGroups = useCallback(() => {
+    setDisplayedGroupsCount((prevCount) => prevCount + INITIAL_LOAD_COUNT);
+  }, []);
+
+  const handleSeeMoreEvents = useCallback(() => {
+    setDisplayedEventsCount((prevCount) => prevCount + INITIAL_LOAD_COUNT);
+  }, []);
+
+  if (eventsState.isLoading || groupsState.isLoading) {
     return (
       <SafeAreaView style={styles.container}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -52,21 +77,41 @@ const HomeScreen: React.FC = () => {
     );
   }
 
-  if (eventsState.error) {
+  if (eventsState.error || groupsState.error) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>{eventsState.error}</Text>
+        <Text style={styles.errorText}>{eventsState.error || groupsState.error}</Text>
       </SafeAreaView>
     );
   }
 
-  const renderItem = () => (
-    <View style={styles.content}>
-      <Text style={styles.title}>Upcoming Events</Text>
-      <EventsList events={events as Event[]} />
-      <Text style={styles.title}>Local Groups</Text>
-      <GroupsList groups={filteredGroups as Group[]} />
-    </View>
+  const renderItem = useCallback(
+    () => (
+      <View style={styles.content}>
+        <Text style={styles.title}>Upcoming Events</Text>
+        <EventsList events={filteredEvents.slice(0, displayedEventsCount)} />
+        {filteredEvents.length > displayedEventsCount && (
+          <TouchableOpacity onPress={handleSeeMoreEvents} style={styles.seeMoreButton}>
+            <Text style={styles.seeMoreText}>See More Events</Text>
+          </TouchableOpacity>
+        )}
+        <Text style={styles.title}>Local Groups</Text>
+        <GroupsList groups={filteredGroups.slice(0, displayedGroupsCount)} />
+        {filteredGroups.length > displayedGroupsCount && (
+          <TouchableOpacity onPress={handleSeeMoreGroups} style={styles.seeMoreButton}>
+            <Text style={styles.seeMoreText}>See More Groups</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    ),
+    [
+      filteredEvents,
+      filteredGroups,
+      displayedEventsCount,
+      displayedGroupsCount,
+      handleSeeMoreEvents,
+      handleSeeMoreGroups,
+    ]
   );
 
   const contentPaddingTop =
@@ -106,6 +151,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     margin: 16,
+  },
+  seeMoreButton: {
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#007AFF',
+    margin: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  seeMoreText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
 
