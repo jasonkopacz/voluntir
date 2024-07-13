@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Animated,
   TouchableOpacity,
+  ListRenderItem,
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { RootState } from '~/redux/store';
@@ -23,14 +24,16 @@ const HEADER_MIN_HEIGHT = 60;
 const SELECTED_ROW_HEIGHT = 40;
 const INITIAL_LOAD_COUNT = 5;
 
+interface ContentItem {
+  key: string;
+}
+
 const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const eventsState = useAppSelector((state: RootState) => state.events);
   const groupsState = useAppSelector((state: RootState) => state.groups);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [filteredGroups, setFilteredGroups] = useState<Group[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [displayedGroupsCount, setDisplayedGroupsCount] = useState(INITIAL_LOAD_COUNT);
   const [displayedEventsCount, setDisplayedEventsCount] = useState(INITIAL_LOAD_COUNT);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -41,42 +44,66 @@ const HomeScreen: React.FC = () => {
     dispatch(fetchGroups());
   }, [dispatch]);
 
-  useEffect(() => {
-    setFilteredGroups(groupsState.allIds.map((id) => groupsState.byId[id]));
-    setFilteredEvents(eventsState.allIds.map((id) => eventsState.byId[id]));
-  }, [eventsState, groupsState]);
+  const filteredGroups = useMemo((): Group[] => {
+    return selectedCategories.length === 0
+      ? groupsState.allIds.map((id) => groupsState.byId[id])
+      : groupsState.allIds
+          .map((id) => groupsState.byId[id])
+          .filter((group) =>
+            group.categoryIds.some((category) => selectedCategories.includes(category))
+          );
+  }, [groupsState, selectedCategories]);
 
-  // See if this can be optimized or moved elsewehre
-  const handleCategorySelect = (categories: string[]) => {
+  const filteredEvents = useMemo((): Event[] => {
+    return selectedCategories.length === 0
+      ? eventsState.allIds.map((id) => eventsState.byId[id])
+      : eventsState.allIds
+          .map((id) => eventsState.byId[id])
+          .filter((event) => selectedCategories.includes(event.categoryId));
+  }, [eventsState, selectedCategories]);
+
+  const handleCategorySelect = useCallback((categories: string[]) => {
     setSelectedCategories(categories);
     setDisplayedGroupsCount(INITIAL_LOAD_COUNT);
     setDisplayedEventsCount(INITIAL_LOAD_COUNT);
-    if (categories.length === 0) {
-      setFilteredGroups(groupsState.allIds.map((id) => groupsState.byId[id]));
-      setFilteredEvents(eventsState.allIds.map((id) => eventsState.byId[id]));
-    } else {
-      const filteredGroups = groupsState.allIds
-        .map((id) => groupsState.byId[id])
-        .filter((group) => group.categoryIds.some((category) => categories.includes(category)));
-      setFilteredGroups(filteredGroups);
+  }, []);
 
-      const filteredEvents = eventsState.allIds
-        .map((id) => eventsState.byId[id])
-        .filter((event) => categories.includes(event.categoryId));
-      setFilteredEvents(filteredEvents);
-    }
-  };
-
-  // Create a see more button template
-  const handleSeeMoreGroups = () => {
+  const handleSeeMoreGroups = useCallback(() => {
     setDisplayedGroupsCount((prevCount) => prevCount + INITIAL_LOAD_COUNT);
-  };
+  }, []);
 
-  const handleSeeMoreEvents = () => {
+  const handleSeeMoreEvents = useCallback(() => {
     setDisplayedEventsCount((prevCount) => prevCount + INITIAL_LOAD_COUNT);
-  };
+  }, []);
 
-  // maybe make a hook for loading and error so it's reuasble
+  const renderItem: ListRenderItem<ContentItem> = useCallback(
+    () => (
+      <View style={styles.content}>
+        <Text style={styles.title}>Upcoming Events</Text>
+        <EventsList events={filteredEvents.slice(0, displayedEventsCount)} />
+        {filteredEvents.length > displayedEventsCount && (
+          <TouchableOpacity onPress={handleSeeMoreEvents} style={styles.seeMoreButton}>
+            <Text style={styles.seeMoreText}>See More Events</Text>
+          </TouchableOpacity>
+        )}
+        <Text style={styles.title}>Local Groups</Text>
+        <GroupsList groups={filteredGroups.slice(0, displayedGroupsCount)} />
+        {filteredGroups.length > displayedGroupsCount && (
+          <TouchableOpacity onPress={handleSeeMoreGroups} style={styles.seeMoreButton}>
+            <Text style={styles.seeMoreText}>See More Groups</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    ),
+    [
+      filteredEvents,
+      filteredGroups,
+      displayedEventsCount,
+      displayedGroupsCount,
+      handleSeeMoreEvents,
+      handleSeeMoreGroups,
+    ]
+  );
   if (eventsState.isLoading || groupsState.isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -93,33 +120,13 @@ const HomeScreen: React.FC = () => {
     );
   }
 
-  // make its own component
-  const renderItem = () => (
-    <View style={styles.content}>
-      <Text style={styles.title}>Upcoming Events</Text>
-      <EventsList events={filteredEvents.slice(0, displayedEventsCount)} />
-      {filteredEvents.length > displayedEventsCount && (
-        <TouchableOpacity onPress={handleSeeMoreEvents} style={styles.seeMoreButton}>
-          <Text style={styles.seeMoreText}>See More Events</Text>
-        </TouchableOpacity>
-      )}
-      <Text style={styles.title}>Local Groups</Text>
-      <GroupsList groups={filteredGroups.slice(0, displayedGroupsCount)} />
-      {filteredGroups.length > displayedGroupsCount && (
-        <TouchableOpacity onPress={handleSeeMoreGroups} style={styles.seeMoreButton}>
-          <Text style={styles.seeMoreText}>See More Groups</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-
   const contentPaddingTop =
     selectedCategories.length > 0 ? HEADER_MIN_HEIGHT + SELECTED_ROW_HEIGHT : HEADER_MIN_HEIGHT;
 
   return (
     <SafeAreaView style={styles.container}>
       <CategoryScroll onCategorySelect={handleCategorySelect} scrollY={scrollY} />
-      <Animated.FlatList
+      <Animated.FlatList<ContentItem>
         data={[{ key: 'content' }]}
         renderItem={renderItem}
         scrollEventThrottle={16}
