@@ -11,5 +11,3 @@ export const selectAllGroups = createSelector([selectGroups], (groups): Group[] 
 );
 
 export const selectAllEvents = createSelector([selectEvents], (events): Event[] =>
-  events.allIds.map((id) => events.byId[id])
-);

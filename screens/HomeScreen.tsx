@@ -102,7 +102,6 @@ const HomeScreen: React.FC = () => {
       handleSeeMoreGroups,
     ]
   );
-
   if (eventsState.isLoading || groupsState.isLoading) {
     return (
       <SafeAreaView style={styles.container}>
