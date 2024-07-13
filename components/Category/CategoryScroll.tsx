@@ -40,8 +40,6 @@ const CategoryScroll: React.FC<CategoryScrollProps> = ({ onCategorySelect, scrol
     (id) => !selectedCategories.includes(id)
   );
 
-  console.log(categoriesState.byId);
-
   return (
     <Animated.View style={[styles.container, { height: containerHeight }]}>
       <ScrollView
