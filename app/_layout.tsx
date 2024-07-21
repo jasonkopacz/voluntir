@@ -1,22 +1,20 @@
 import '../global.css';
-
-import { Stack } from 'expo-router';
+import React from 'react';
 import { store } from '~/redux/store';
 import { Provider } from 'react-redux';
 import { SafeAreaView, StyleSheet } from 'react-native';
+import AppNavigator from '~/navigation/AppNavigator';
+
 export default function Layout() {
   return (
     <Provider store={store}>
       <SafeAreaView style={styles.container}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        />
+        <AppNavigator />
       </SafeAreaView>
     </Provider>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

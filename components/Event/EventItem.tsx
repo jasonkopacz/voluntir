@@ -1,12 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Event } from '~/redux/slices/events/eventSlice';
 
-const EventItem = ({ event }: { event: Event }) => {
-  if (!event) return null;
+type RootStackParamList = {
+  EventDetailScreen: { eventId: string };
+};
+
+type EventItemProps = {
+  event: Event;
+};
+
+const EventItem: React.FC<EventItemProps> = ({ event }: EventItemProps): JSX.Element => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  if (!event) {
+    throw new Error('Event is required');
+  }
+
+  const handlePress = (): void => {
+    navigation.navigate('EventDetailScreen', { eventId: event.id });
+  };
 
   return (
-    <View style={styles.eventItem}>
+    <TouchableOpacity onPress={handlePress} style={styles.eventItem}>
       <Image source={{ uri: event.imageUrl }} style={styles.eventImage} />
       <View style={styles.eventDetails}>
         <Text style={styles.eventTitle}>{event.title}</Text>
@@ -14,7 +32,7 @@ const EventItem = ({ event }: { event: Event }) => {
         <Text>{`${event?.location.city}, ${event?.location.state}`}</Text>
         <Text>{`${event.currentParticipants}/${event.maxParticipants} participants`}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -41,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(EventItem);
+export default EventItem;

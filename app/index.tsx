@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useAppSelector } from '../redux/hooks';
-import BottomTabNavigator from '../navigation/BottomTabNavigator';
+import App from './_layout';
 import LoginComponent from '~/components/auth/LoginComponent';
 import OnboardingQuestionnaire from '../components/Onboarding/OnboardingQuestionnaire';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function Index(): JSX.Element {
   const user = useAppSelector((state) => state.user.currentUser);
@@ -23,9 +24,9 @@ export default function Index(): JSX.Element {
   }
 
   return (
-    <View style={styles.container}>
-      <BottomTabNavigator />
-    </View>
+    <NavigationContainer>
+      <App />;
+    </NavigationContainer>
   );
 }
 
