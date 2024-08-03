@@ -5,7 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Event } from '~/redux/slices/events/eventSlice';
 
 type RootStackParamList = {
-  EventDetailScreen: { eventId: string };
+  EventDetail: { id: string };
 };
 
 type EventItemProps = {
@@ -20,7 +20,7 @@ const EventItem: React.FC<EventItemProps> = ({ event }: EventItemProps): JSX.Ele
   }
 
   const handlePress = (): void => {
-    navigation.navigate('EventDetailScreen', { eventId: event.id });
+    navigation.navigate('EventDetail', { id: event.id });
   };
 
   return (

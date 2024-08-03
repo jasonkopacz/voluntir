@@ -1,30 +1,20 @@
-import React, { useEffect } from 'react';
-import { useAppDispatch } from '~/redux/hooks';
+import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Event } from '~/redux/slices/events/eventSlice';
 import { Ionicons } from '@expo/vector-icons';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation/AppNavigator';
-import { fetchEvent } from '~/redux/actions/events/eventActions';
 
-type EventDetailScreenProps = {
+type EventDetailProps = {
   route: RouteProp<RootStackParamList, 'EventDetail'>;
   navigation: StackNavigationProp<RootStackParamList, 'EventDetail'>;
 };
 
-const EventDetailScreen: React.FC<EventDetailScreenProps> = ({ route }) => {
+const EventDetail: React.FC<EventDetailProps> = ({ route, navigation }) => {
   const { eventId } = route.params;
   const event: Event = {} as Event;
   const onJoinEvent = () => {};
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchEvent(eventId));
-  }, [dispatch, eventId]);
-
-  if (!event) {
-    return <Text>Loading...</Text>;
-  }
 
   return (
     <ScrollView style={styles.container}>
@@ -113,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventDetailScreen;
+export default EventDetail;

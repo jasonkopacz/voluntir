@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { useAppSelector } from '~/redux/hooks';
 import { selectEventById, selectGroupById } from '~/redux/selectors';
 
-interface EventDetailScreenProps {
+interface EventDetailProps {
   eventId: string;
 }
 
-const EventDetailScreen: React.FC<EventDetailScreenProps> = ({ eventId }) => {
+const EventDetail: React.FC<EventDetailProps> = ({ eventId }) => {
   const event = useAppSelector((state) => selectEventById(state, eventId));
   const group = event
     ? useAppSelector((state) => selectGroupById(state, event.groupId))
@@ -68,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventDetailScreen;
+export default EventDetail;
