@@ -1,20 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { Event } from '~/redux/slices/events/eventSlice';
 import { Ionicons } from '@expo/vector-icons';
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '~/navigation/AppNavigator';
+import { useLocalSearchParams } from 'expo-router';
+import { fetchEvent } from '~/redux/actions/events/eventActions';
 
-type EventDetailProps = {
-  route: RouteProp<RootStackParamList, 'EventDetail'>;
-  navigation: StackNavigationProp<RootStackParamList, 'EventDetail'>;
-};
+const EventDetail: React.FC = () => {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const event = useAppSelector((state) => state.event.currentEvent);
 
-const EventDetail: React.FC<EventDetailProps> = ({ route, navigation }) => {
-  const { eventId } = route.params;
-  const event: Event = {} as Event;
-  const onJoinEvent = () => {};
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchEvent(id));
+    }
+  }, [dispatch, id]);
+
+  const onJoinEvent = () => {
+    // Implement join event logic
+  };
+
+  if (!event) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -31,17 +40,15 @@ const EventDetail: React.FC<EventDetailProps> = ({ route, navigation }) => {
         </View>
         <View style={styles.infoRow}>
           <Ionicons name="location-outline" size={20} color="#555" />
-          <Text
-            style={
-              styles.infoText
-            }>{`${event.location?.address}, ${event.location?.city}, ${event.location?.state} ${event.location?.zipCode}`}</Text>
+          <Text style={styles.infoText}>
+            {`${event.location?.address}, ${event.location?.city}, ${event.location?.state} ${event.location?.zipCode}`}
+          </Text>
         </View>
         <View style={styles.infoRow}>
           <Ionicons name="people-outline" size={20} color="#555" />
-          <Text
-            style={
-              styles.infoText
-            }>{`${event.currentParticipants}/${event.maxParticipants} participants`}</Text>
+          <Text style={styles.infoText}>
+            {`${event.currentParticipants}/${event.maxParticipants} participants`}
+          </Text>
         </View>
         <Text style={styles.description}>{event.description}</Text>
         <TouchableOpacity style={styles.joinButton} onPress={onJoinEvent}>

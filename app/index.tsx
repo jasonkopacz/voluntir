@@ -4,30 +4,21 @@ import { useAppSelector } from '../redux/hooks';
 import App from './_layout';
 import LoginComponent from '~/components/auth/LoginComponent';
 import OnboardingQuestionnaire from '../components/Onboarding/OnboardingQuestionnaire';
-import { NavigationContainer } from '@react-navigation/native';
+import { Redirect } from 'expo-router';
 
 export default function Index(): JSX.Element {
   const user = useAppSelector((state) => state.user.currentUser);
   const hasCompletedOnboarding = useAppSelector((state) => state.user.hasCompletedOnboarding);
 
   if (!user) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.header}>Volunteer</Text>
-        <LoginComponent />
-      </View>
-    );
+    return <Redirect href="/login" />;
   }
 
   if (!hasCompletedOnboarding) {
-    return <OnboardingQuestionnaire />;
+    return <Redirect href="/onboarding" />;
   }
 
-  return (
-    <NavigationContainer>
-      <App />;
-    </NavigationContainer>
-  );
+  return <Redirect href="/home" />;
 }
 
 const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-const iconMap = {
+const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
   home: 'home',
   search: 'search',
   profile: 'person',
@@ -13,11 +13,19 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({
+          focused,
+          color,
+          size,
+        }: {
+          focused: boolean;
+          color: string;
+          size: number;
+        }) => {
           const iconName = iconMap[route.name as keyof typeof iconMap];
           return (
             <Ionicons
-              name={focused ? iconName : (`${iconName}-outline` as any)}
+              name={focused ? iconName : (`${iconName}-outline` as keyof typeof Ionicons.glyphMap)}
               size={size}
               color={color}
             />

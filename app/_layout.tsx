@@ -3,13 +3,16 @@ import React from 'react';
 import { store } from '~/redux/store';
 import { Provider } from 'react-redux';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import AppNavigator from '~/navigation/AppNavigator';
+import { Stack } from 'expo-router';
 
-export default function Layout() {
+export default function RootLayout() {
   return (
     <Provider store={store}>
       <SafeAreaView style={styles.container}>
-        <AppNavigator />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="EventDetail" options={{ headerShown: true }} />
+        </Stack>
       </SafeAreaView>
     </Provider>
   );

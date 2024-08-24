@@ -1,26 +1,29 @@
 import React, { useEffect } from 'react';
-import { useAppDispatch } from '~/redux/hooks';
+import { useAppDispatch, useAppSelector } from '~/redux/hooks';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Event } from '~/redux/slices/events/eventSlice';
 import { Ionicons } from '@expo/vector-icons';
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '~/navigation/AppNavigator';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { fetchEvent } from '~/redux/actions/events/eventActions';
 
 type EventDetailScreenProps = {
-  route: RouteProp<RootStackParamList, 'EventDetail'>;
-  navigation: StackNavigationProp<RootStackParamList, 'EventDetail'>;
+  eventId: string;
 };
 
-const EventDetailScreen: React.FC<EventDetailScreenProps> = ({ route }) => {
-  const { eventId } = route.params;
-  const event: Event = {} as Event;
-  const onJoinEvent = () => {};
+const EventDetailScreen: React.FC<EventDetailScreenProps> = ({ eventId }) => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
+  const event = useAppSelector((state) => state.event.currentEvent);
+
   useEffect(() => {
-    dispatch(fetchEvent(eventId));
+    if (eventId) {
+      dispatch(fetchEvent(eventId));
+    }
   }, [dispatch, eventId]);
+
+  const onJoinEvent = () => {
+    // Implement join event logic
+  };
 
   if (!event) {
     return <Text>Loading...</Text>;

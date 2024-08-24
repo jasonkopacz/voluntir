@@ -1,26 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { router } from 'expo-router';
 import { Event } from '~/redux/slices/events/eventSlice';
-
-type RootStackParamList = {
-  EventDetail: { id: string };
-};
 
 type EventItemProps = {
   event: Event;
 };
 
 const EventItem: React.FC<EventItemProps> = ({ event }: EventItemProps): JSX.Element => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
   if (!event) {
     throw new Error('Event is required');
   }
 
   const handlePress = (): void => {
-    navigation.navigate('EventDetail', { id: event.id });
+    router.push(`/EventDetail/${event.id}`);
   };
 
   return (
